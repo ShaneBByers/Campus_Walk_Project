@@ -11,9 +11,9 @@ import Foundation
 class DirectionModel {
     static let sharedInstance = DirectionModel()
     
-    private var instructionList = [String]()
+    fileprivate var instructionList = [String]()
     
-    func updateInstructionsList(newList : [String]) {
+    func updateInstructionsList(_ newList : [String]) {
         instructionList = newList
     }
     
@@ -21,7 +21,7 @@ class DirectionModel {
         return instructionList
     }
     
-    func instructionsAtIndex(index: Int) -> String {
+    func instructionsAtIndex(_ index: Int) -> String {
         return instructionList[index]
     }
     

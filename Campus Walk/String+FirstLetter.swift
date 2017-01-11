@@ -13,7 +13,7 @@ extension String {
         if self.isEmpty {
             return nil
         } else {
-            let firstCharacter = self.substringToIndex(self.startIndex.successor())
+            let firstCharacter = self.substring(to: self.characters.index(after: self.startIndex))
             if firstCharacter >= "0" && firstCharacter <= "9" {
                 return "#"
             } else {

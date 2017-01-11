@@ -52,7 +52,7 @@ class BuildingModel {
     
     var mapType : Int
     
-    var buildingsURL : NSURL
+    var buildingsURL : URL
     
     let archive : Archive
     
@@ -68,15 +68,15 @@ class BuildingModel {
         
         mapType = 0
         
-        let fileManager = NSFileManager.defaultManager()
-        let documentURL = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0]
-        buildingsURL = documentURL.URLByAppendingPathComponent(plistName + ".archive")!
+        let fileManager = FileManager.default
+        let documentURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        buildingsURL = documentURL.appendingPathComponent(plistName + ".archive")
         
-        let fileExists = fileManager.fileExistsAtPath(buildingsURL.path!)
+        let fileExists = fileManager.fileExists(atPath: buildingsURL.path)
         
         if fileExists {
             
-            archive = NSKeyedUnarchiver.unarchiveObjectWithFile(buildingsURL.path!)! as! Archive
+            archive = NSKeyedUnarchiver.unarchiveObject(withFile: buildingsURL.path)! as! Archive
             buildingsData = archive.buildings
             showFavorites = archive.showFavorites
             trackLocation = archive.trackLocation
@@ -84,7 +84,7 @@ class BuildingModel {
             mapType = archive.mapType
             
         } else {
-            let path = NSBundle.mainBundle().pathForResource(plistName, ofType: "plist")
+            let path = Bundle.main.path(forResource: plistName, ofType: "plist")
             let data = NSArray(contentsOfFile: path!) as! [[String:AnyObject]]
             
             var _buildings = [Building]()
@@ -107,7 +107,7 @@ class BuildingModel {
             buildingsData = _buildings
             
             archive = Archive(buildings: buildingsData, showFavorites: showFavorites, trackLocation: trackLocation, showOriginalPictures: showOriginalPictures, mapType: mapType)
-            NSKeyedArchiver.archiveRootObject(archive, toFile: buildingsURL.path!)
+            NSKeyedArchiver.archiveRootObject(archive, toFile: buildingsURL.path)
         }
         
         var _buildingsDictionary = [String:[Building]]()
@@ -124,7 +124,7 @@ class BuildingModel {
         
         buildingsDictionary = _buildingsDictionary
         let keys = Array(buildingsDictionary.keys)
-        allKeys = keys.sort()
+        allKeys = keys.sorted()
         currentMapRegion = defaultMapRegion
         
         for building in buildingsData {
@@ -134,13 +134,13 @@ class BuildingModel {
         }
     }
     
-    func buildingsCountForSection(section:Int) -> Int {
+    func buildingsCountForSection(_ section:Int) -> Int {
         let letterInSection = letterForSection(section)
         let buildingsInSection = buildingsDictionary[letterInSection]!
         return buildingsInSection.count
     }
     
-    func letterForSection(section:Int) -> String {
+    func letterForSection(_ section:Int) -> String {
         return allKeys[section]
     }
     
@@ -152,7 +152,7 @@ class BuildingModel {
         return allKeys
     }
     
-    func buildingInSection(section: Int, row: Int) -> Building {
+    func buildingInSection(_ section: Int, row: Int) -> Building {
         
         let titleInSection = allKeys[section]
         
@@ -161,9 +161,9 @@ class BuildingModel {
         return buildingsInSection[row]
     }
     
-    func addFavoriteBuildingWithName(name: String) {
+    func addFavoriteBuildingWithName(_ name: String) {
         if favoriteBuildings.count == 0 {
-            allKeys.insert(favoriteLetter, atIndex: 0)
+            allKeys.insert(favoriteLetter, at: 0)
             
         }
         let firstLetter = name.firstLetter()
@@ -174,8 +174,8 @@ class BuildingModel {
                 
                 building.isFavorite = true
                 favoriteBuildings.append(building)
-                if let index = defaultBuildings.indexOf(building) {
-                    defaultBuildings.removeAtIndex(index)
+                if let index = defaultBuildings.index(of: building) {
+                    defaultBuildings.remove(at: index)
                 }
             }
         }
@@ -189,13 +189,13 @@ class BuildingModel {
         
     }
     
-    func deleteFavoriteBuildingWithName(name: String) {
-        for (i, building) in favoriteBuildings.enumerate() {
+    func deleteFavoriteBuildingWithName(_ name: String) {
+        for (i, building) in favoriteBuildings.enumerated() {
             if building.name == name {
                 
                 building.isFavorite = false
                 
-                favoriteBuildings.removeAtIndex(i)
+                favoriteBuildings.remove(at: i)
                 defaultBuildings.append(building)
             }
         }
@@ -203,23 +203,23 @@ class BuildingModel {
         buildingsDictionary[favoriteLetter] = favoriteBuildings
         
         if favoriteBuildings.count == 0 {
-            allKeys.removeAtIndex(0)
-            buildingsDictionary.removeValueForKey(favoriteLetter)
+            allKeys.remove(at: 0)
+            buildingsDictionary.removeValue(forKey: favoriteLetter)
         }
         
         saveArchive()
     }
     
-    func deleteDefaultBuildingWithName(name: String) {
-        for (i, building) in defaultBuildings.enumerate() {
+    func deleteDefaultBuildingWithName(_ name: String) {
+        for (i, building) in defaultBuildings.enumerated() {
             if building.name == name {
                 
-                defaultBuildings.removeAtIndex(i)
+                defaultBuildings.remove(at: i)
             }
         }
     }
     
-    func selectBuildingWithIndexPath(indexPath : NSIndexPath) -> Building {
+    func selectBuildingWithIndexPath(_ indexPath : IndexPath) -> Building {
         let titleInSection = allKeys[indexPath.section]
         
         let buildingsInSection = buildingsDictionary[titleInSection]!
@@ -231,7 +231,17 @@ class BuildingModel {
         return building
     }
     
-    func buildingWithName(name: String) -> Building? {
+    func selectBuildingWithIndexPathNoReturn(_ indexPath : IndexPath) {
+        let titleInSection = allKeys[indexPath.section]
+        
+        let buildingsInSection = buildingsDictionary[titleInSection]!
+        
+        let building = buildingsInSection[indexPath.row]
+        
+        defaultBuildings.append(building)
+    }
+    
+    func buildingWithName(_ name: String) -> Building? {
         let firstLetter = name.firstLetter()
         
         let buildingsInSection = buildingsDictionary[firstLetter!]!
@@ -254,16 +264,16 @@ class BuildingModel {
         return defaultBuildings
     }
     
-    func updateCurrentLocation(latitude: Double, longitude: Double, latitudeDelta: Double, longitudeDelta: Double) {
+    func updateCurrentLocation(_ latitude: Double, longitude: Double, latitudeDelta: Double, longitudeDelta: Double) {
         currentMapRegion = MapRegion(latitude: latitude, longitude: longitude, latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
     }
     
-    func removeBuildingWithName(name: String) {
+    func removeBuildingWithName(_ name: String) {
         deleteFavoriteBuildingWithName(name)
         deleteDefaultBuildingWithName(name)
     }
     
-    func setPreferences(showFavorites: Bool, trackLocation: Bool, showOriginalPictures: Bool, mapType: Int) {
+    func setPreferences(_ showFavorites: Bool, trackLocation: Bool, showOriginalPictures: Bool, mapType: Int) {
         self.showFavorites = showFavorites
         self.trackLocation = trackLocation
         self.showOriginalPictures = showOriginalPictures
@@ -279,7 +289,7 @@ class BuildingModel {
     
     func saveArchive() {
         
-        NSKeyedArchiver.archiveRootObject(archive, toFile: buildingsURL.path!)
+        NSKeyedArchiver.archiveRootObject(archive, toFile: buildingsURL.path)
     }
 
 

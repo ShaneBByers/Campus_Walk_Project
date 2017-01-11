@@ -11,25 +11,25 @@ import UIKit
 class TableViewController: UITableViewController {
     let model = BuildingModel.sharedInstance
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return model.buildingsCountForSection(section)
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return model.numberOfSections()
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return model.letterForSection(section)
     }
     
-    override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
+    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         return model.letters()
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("BuildingCell", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath)
         
         let building = model.buildingInSection(indexPath.section, row: indexPath.row)
         
@@ -56,18 +56,34 @@ class TableViewController: UITableViewController {
         return cell
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if let identifier = segue.identifier {
             switch identifier {
             case "MapSegue":
                 
                 if let cell = sender as? UITableViewCell {
-                    let indexPath = tableView.indexPathForCell(cell)
-                    self.model.selectBuildingWithIndexPath(indexPath!)
+                    let indexPath = tableView.indexPath(for: cell)
+                    //////////
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    ///////// This is weird. Had to fix this to get rid of warning.
+                    self.model.selectBuildingWithIndexPathNoReturn(indexPath!)
                 }
             case "unwindToDirections":
-                let destination = segue.destinationViewController as! DirectionsViewController
+                let destination = segue.destination as! DirectionsViewController
                 
                 let indexPath = tableView.indexPathForSelectedRow!
                 let section = indexPath.section

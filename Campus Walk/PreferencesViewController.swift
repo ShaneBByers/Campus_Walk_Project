@@ -31,13 +31,13 @@ class PreferencesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        showFavoritesSwitch.on = model.showFavorites
-        trackLocationSwitch.on = model.trackLocation
-        showOriginalPicturesSwitch.on = model.showOriginalPictures
+        showFavoritesSwitch.isOn = model.showFavorites
+        trackLocationSwitch.isOn = model.trackLocation
+        showOriginalPicturesSwitch.isOn = model.showOriginalPictures
         mapTypeSegmentedControl.selectedSegmentIndex = model.mapType
     }
     
-    @IBAction func dismissButtonPressed(sender: UIButton) {
-        model.setPreferences(showFavoritesSwitch.on, trackLocation: trackLocationSwitch.on, showOriginalPictures: showOriginalPicturesSwitch.on, mapType: mapTypeSegmentedControl.selectedSegmentIndex)
+    @IBAction func dismissButtonPressed(_ sender: UIButton) {
+        model.setPreferences(showFavoritesSwitch.isOn, trackLocation: trackLocationSwitch.isOn, showOriginalPictures: showOriginalPicturesSwitch.isOn, mapType: mapTypeSegmentedControl.selectedSegmentIndex)
     }
 }

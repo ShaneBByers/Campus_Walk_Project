@@ -28,7 +28,7 @@ class DirectionsViewController: UIViewController {
     }
     
     
-    @IBAction func textFieldDidBeginEditing(sender: UITextField) {
+    @IBAction func textFieldDidBeginEditing(_ sender: UITextField) {
         
         lastTappedTextField = sender
         
@@ -36,31 +36,31 @@ class DirectionsViewController: UIViewController {
         
         let actionController = UIAlertController()
         
-        let currentLocationAction = UIAlertAction(title: "Use Current Location", style: .Default) { (action) in
+        let currentLocationAction = UIAlertAction(title: "Use Current Location", style: .default) { (action) in
             self.lastTappedTextField?.text = "Current Location"
         }
         
         actionController.addAction(currentLocationAction)
         
-        let chooseBuildingAction = UIAlertAction(title: "Choose a Building", style: .Default) { (action) in
-            self.performSegueWithIdentifier("showBuildingsForDirections", sender: self)
+        let chooseBuildingAction = UIAlertAction(title: "Choose a Building", style: .default) { (action) in
+            self.performSegue(withIdentifier: "showBuildingsForDirections", sender: self)
         }
         
         actionController.addAction(chooseBuildingAction)
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
         actionController.addAction(cancelAction)
         
-        presentViewController(actionController, animated: true, completion: nil)
+        present(actionController, animated: true, completion: nil)
         
         
-        performSegueWithIdentifier("showBuildingsForDirections", sender: self)
+        performSegue(withIdentifier: "showBuildingsForDirections", sender: self)
         
         
     }
     
-    func setTextField(building: Building) {
+    func setTextField(_ building: Building) {
         lastTappedTextField?.text = building.name
         
         if lastTappedTextField!.tag == 0 {
@@ -70,12 +70,12 @@ class DirectionsViewController: UIViewController {
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier! {
         case "showBuildingsForDirections":
             break
         case "unwindToMap":
-            let destinationViewController = segue.destinationViewController as! MapViewController
+            let destinationViewController = segue.destination as! MapViewController
             
             destinationViewController.sourceAndDestination(source, destination: destination)
             
@@ -84,10 +84,10 @@ class DirectionsViewController: UIViewController {
         }
     }
     
-    @IBAction func getDirectionsButtonTapped(sender: UIButton) {
+    @IBAction func getDirectionsButtonTapped(_ sender: UIButton) {
         if originTextField.text != originTextField.placeholder! {
             if destinationTextField.text != destinationTextField.placeholder! {
-                performSegueWithIdentifier("unwindToMap", sender: self)
+                performSegue(withIdentifier: "unwindToMap", sender: self)
             } else {
                 sendAlert("Missing Destination", message: "Please select a destination.")
             }
@@ -96,15 +96,15 @@ class DirectionsViewController: UIViewController {
         }
     }
     
-    @IBAction func dismissListOfBuildings(segue: UIStoryboardSegue) {
+    @IBAction func dismissListOfBuildings(_ segue: UIStoryboardSegue) {
         
     }
     
-    func sendAlert(title: String, message: String) {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-        let alertAction = UIAlertAction(title: "Okay", style: .Cancel, handler: nil)
+    func sendAlert(_ title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "Okay", style: .cancel, handler: nil)
         
         alertController.addAction(alertAction)
-        self.presentViewController(alertController, animated: true, completion: nil)
+        self.present(alertController, animated: true, completion: nil)
     }
 }

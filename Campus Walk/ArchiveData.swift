@@ -41,20 +41,20 @@ class Archive : NSObject, NSCoding {
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let buildings = aDecoder.decodeObjectForKey(ArchiveKey.buildings) as! [Building]
-        let showFavorites = aDecoder.decodeBoolForKey(ArchiveKey.showFavorites)
-        let trackLocation = aDecoder.decodeBoolForKey(ArchiveKey.trackLocation)
-        let showOriginalPictures = aDecoder.decodeBoolForKey(ArchiveKey.showOriginalPictures)
-        let mapType : Int = aDecoder.decodeIntegerForKey(ArchiveKey.mapType)
+        let buildings = aDecoder.decodeObject(forKey: ArchiveKey.buildings) as! [Building]
+        let showFavorites = aDecoder.decodeBool(forKey: ArchiveKey.showFavorites)
+        let trackLocation = aDecoder.decodeBool(forKey: ArchiveKey.trackLocation)
+        let showOriginalPictures = aDecoder.decodeBool(forKey: ArchiveKey.showOriginalPictures)
+        let mapType : Int = aDecoder.decodeInteger(forKey: ArchiveKey.mapType)
         self.init(buildings:buildings, showFavorites: showFavorites, trackLocation: trackLocation, showOriginalPictures: showOriginalPictures, mapType: mapType)
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(buildings, forKey: ArchiveKey.buildings)
-        aCoder.encodeBool(showFavorites, forKey: ArchiveKey.showFavorites)
-        aCoder.encodeBool(trackLocation, forKey: ArchiveKey.trackLocation)
-        aCoder.encodeBool(showOriginalPictures, forKey: ArchiveKey.showOriginalPictures)
-        aCoder.encodeInteger(mapType, forKey: ArchiveKey.mapType)
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(buildings, forKey: ArchiveKey.buildings)
+        aCoder.encode(showFavorites, forKey: ArchiveKey.showFavorites)
+        aCoder.encode(trackLocation, forKey: ArchiveKey.trackLocation)
+        aCoder.encode(showOriginalPictures, forKey: ArchiveKey.showOriginalPictures)
+        aCoder.encode(mapType, forKey: ArchiveKey.mapType)
     }
     
 }
@@ -87,28 +87,28 @@ class Building: NSObject, NSCoding {
         }
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeDouble(latitude, forKey: ArchiveKey.latitude)
-        aCoder.encodeDouble(longitude, forKey: ArchiveKey.longitude)
-        aCoder.encodeObject(name, forKey: ArchiveKey.name)
-        aCoder.encodeInteger(yearConstructed, forKey: ArchiveKey.yearConstructed)
-        aCoder.encodeObject(photoName, forKey: ArchiveKey.photoName)
-        aCoder.encodeBool(isFavorite, forKey: ArchiveKey.isFavorite)
-        aCoder.encodeInteger(buildingCode, forKey: ArchiveKey.buildingCode)
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(latitude, forKey: ArchiveKey.latitude)
+        aCoder.encode(longitude, forKey: ArchiveKey.longitude)
+        aCoder.encode(name, forKey: ArchiveKey.name)
+        aCoder.encode(yearConstructed, forKey: ArchiveKey.yearConstructed)
+        aCoder.encode(photoName, forKey: ArchiveKey.photoName)
+        aCoder.encode(isFavorite, forKey: ArchiveKey.isFavorite)
+        aCoder.encode(buildingCode, forKey: ArchiveKey.buildingCode)
         if let updatedImage = self.updatedImage {
-            aCoder.encodeObject(UIImagePNGRepresentation(updatedImage), forKey: ArchiveKey.updatedImage)
+            aCoder.encode(UIImagePNGRepresentation(updatedImage), forKey: ArchiveKey.updatedImage)
         }
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let latitude = aDecoder.decodeDoubleForKey(ArchiveKey.latitude)
-        let longitude = aDecoder.decodeDoubleForKey(ArchiveKey.longitude)
-        let name = aDecoder.decodeObjectForKey(ArchiveKey.name) as! String
-        let yearConstructed : Int = aDecoder.decodeIntegerForKey(ArchiveKey.yearConstructed)
-        let photoName = aDecoder.decodeObjectForKey(ArchiveKey.photoName) as! String
-        let isFavorite = aDecoder.decodeBoolForKey(ArchiveKey.isFavorite)
-        let buildingCode : Int = aDecoder.decodeIntegerForKey(ArchiveKey.buildingCode)
-        let updatedImage = aDecoder.decodeObjectForKey(ArchiveKey.updatedImage) as! NSData?
+        let latitude = aDecoder.decodeDouble(forKey: ArchiveKey.latitude)
+        let longitude = aDecoder.decodeDouble(forKey: ArchiveKey.longitude)
+        let name = aDecoder.decodeObject(forKey: ArchiveKey.name) as! String
+        let yearConstructed : Int = aDecoder.decodeInteger(forKey: ArchiveKey.yearConstructed)
+        let photoName = aDecoder.decodeObject(forKey: ArchiveKey.photoName) as! String
+        let isFavorite = aDecoder.decodeBool(forKey: ArchiveKey.isFavorite)
+        let buildingCode : Int = aDecoder.decodeInteger(forKey: ArchiveKey.buildingCode)
+        let updatedImage = aDecoder.decodeObject(forKey: ArchiveKey.updatedImage) as! Data?
         
         if let updatedImage = updatedImage {
             self.init(name: name, buildingCode: buildingCode, yearConstructed: yearConstructed, latitude: latitude, longitude: longitude, photoName: photoName, isFavorite: isFavorite, updatedImage: UIImage(data: updatedImage))

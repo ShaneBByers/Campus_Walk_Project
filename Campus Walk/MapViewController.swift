@@ -103,21 +103,21 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         setRegion()
         
         if model.trackLocation {
-            self.mapView.setCenterCoordinate(self.mapView.userLocation.coordinate, animated: true)
-            mapView.userTrackingMode = .FollowWithHeading
+            self.mapView.setCenter(self.mapView.userLocation.coordinate, animated: true)
+            mapView.userTrackingMode = .followWithHeading
         } else {
-            mapView.userTrackingMode = .None
+            mapView.userTrackingMode = .none
         }
         
         switch model.mapType {
         case 0:
-            mapView.mapType = .Standard
+            mapView.mapType = .standard
         case 1:
-            mapView.mapType = .Satellite
+            mapView.mapType = .satellite
         case 2:
-            mapView.mapType = .Hybrid
+            mapView.mapType = .hybrid
         default:
-            mapView.mapType = .Standard
+            mapView.mapType = .standard
         }
         
         for favorite in model.favorites() {
@@ -164,10 +164,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         mapView.removeAnnotations(mapView.annotations)
         
         if model.trackLocation {
-            self.mapView.setCenterCoordinate(self.mapView.userLocation.coordinate, animated: true)
-            mapView.userTrackingMode = .FollowWithHeading
+            self.mapView.setCenter(self.mapView.userLocation.coordinate, animated: true)
+            mapView.userTrackingMode = .followWithHeading
         } else {
-            mapView.userTrackingMode = .None
+            mapView.userTrackingMode = .none
         }
         
         for favorite in model.favorites() {
@@ -197,7 +197,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     }
     
-    func addAnnotation(title: String, subtitle: String, latitude: Double, longitude: Double, photoName: String, masterTableViewController: UITableViewController, defaultBuildings: [Building], favoriteBuildings: [Building]) {
+    func addAnnotation(_ title: String, subtitle: String, latitude: Double, longitude: Double, photoName: String, masterTableViewController: UITableViewController, defaultBuildings: [Building], favoriteBuildings: [Building]) {
         
         let annotation = Place(coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), title: title, subtitle: subtitle, photoName: photoName, isFavorite: false)
         
@@ -241,16 +241,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         mapView.region = MKCoordinateRegion(center: center, span: span)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         if CLLocationManager.locationServicesEnabled() {
-            if CLLocationManager.authorizationStatus() == .NotDetermined {
+            if CLLocationManager.authorizationStatus() == .notDetermined {
                 locationManager.requestWhenInUseAuthorization()
             }
         }
     }
     
-    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        if status == .AuthorizedWhenInUse {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse {
             mapView.showsUserLocation = true
             locationManager.startUpdatingLocation()
         } else {
@@ -266,18 +266,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
 
     
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
         let view: MKAnnotationView
         if let annotation = annotation as? Place {
             
             newRegion = MKCoordinateRegion(center: annotation.coordinate, span: zoomedInCoordinateSpan)
 
-            if let dequedView = mapView.dequeueReusableAnnotationViewWithIdentifier(defaultIdentifier) {
+            if let dequedView = mapView.dequeueReusableAnnotationView(withIdentifier: defaultIdentifier) {
                 dequedView.annotation = annotation
                 view = dequedView
                 return view
-            } else if let dequedView = mapView.dequeueReusableAnnotationViewWithIdentifier(favoriteIdentifier) {
+            } else if let dequedView = mapView.dequeueReusableAnnotationView(withIdentifier: favoriteIdentifier) {
                 dequedView.annotation = annotation
                 view = dequedView
                 return view
@@ -297,13 +297,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 
                 if isFavorite {
                     pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: favoriteIdentifier)
-                    pin.pinTintColor = UIColor.blueColor()
+                    pin.pinTintColor = UIColor.blue
                 } else {
                     pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: defaultIdentifier)
-                    pin.pinTintColor = UIColor.redColor()
+                    pin.pinTintColor = UIColor.red
                 }
                 
-                pin.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure) as UIView
+                pin.rightCalloutAccessoryView = UIButton(type: .detailDisclosure) as UIView
                 
                 pin.canShowCallout = true
                 
@@ -314,18 +314,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         return nil
     }
     
-    func mapViewDidFinishLoadingMap(mapView: MKMapView) {
+    func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
         if let newRegion = self.newRegion {
-            UIView.animateWithDuration(1.0, animations:{
+            UIView.animate(withDuration: 1.0, animations:{
                 mapView.region = newRegion
             })
         }
     }
     
-    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         
         if let annotation = view.annotation as? Place {
-            let alertController = UIAlertController(title: annotation.title, message: annotation.subtitle, preferredStyle: .ActionSheet)
+            let alertController = UIAlertController(title: annotation.title, message: annotation.subtitle, preferredStyle: .actionSheet)
             var isFavorite : Bool = false
             
             for place in places {
@@ -341,26 +341,26 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             if model.showFavorites {
                 
                 if isFavorite {
-                    let deleteFavoriteAction = UIAlertAction(title: "Remove from Favorites", style: .Destructive, handler: { (action) in
+                    let deleteFavoriteAction = UIAlertAction(title: "Remove from Favorites", style: .destructive, handler: { (action) in
                         self.model.deleteFavoriteBuildingWithName(annotation.title!)
                         annotation.isFavorite = false
                         self.tableViewController.tableView.reloadSectionIndexTitles()
                         self.tableViewController.tableView.reloadData()
-                        self.tableViewController.tableView.setContentOffset(CGPointZero, animated: false)
+                        self.tableViewController.tableView.setContentOffset(CGPoint.zero, animated: false)
                         let pin = view as! MKPinAnnotationView
-                        pin.pinTintColor = UIColor.redColor()
+                        pin.pinTintColor = UIColor.red
                         self.model.updateCurrentLocation(self.mapView.region.center.latitude, longitude: self.mapView.region.center.longitude, latitudeDelta: self.mapView.region.span.latitudeDelta, longitudeDelta: self.mapView.region.span.longitudeDelta)
                     })
                     alertController.addAction(deleteFavoriteAction)
                 } else {
-                    let addFavoriteAction = UIAlertAction(title: "Add to Favorites", style: .Default, handler: {(action) in
+                    let addFavoriteAction = UIAlertAction(title: "Add to Favorites", style: .default, handler: {(action) in
                         self.model.addFavoriteBuildingWithName(annotation.title!)
                         annotation.isFavorite = true
                         self.tableViewController.tableView.reloadSectionIndexTitles()
                         self.tableViewController.tableView.reloadData()
-                        self.tableViewController.tableView.setContentOffset(CGPointZero, animated: false)
+                        self.tableViewController.tableView.setContentOffset(CGPoint.zero, animated: false)
                         let pin = view as! MKPinAnnotationView
-                        pin.pinTintColor = UIColor.blueColor()
+                        pin.pinTintColor = UIColor.blue
                         self.model.updateCurrentLocation(self.mapView.region.center.latitude, longitude: self.mapView.region.center.longitude, latitudeDelta: self.mapView.region.span.latitudeDelta, longitudeDelta: self.mapView.region.span.longitudeDelta)
                     })
                     
@@ -369,36 +369,36 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 
             }
             
-            let showDetailsAction = UIAlertAction(title: "More Information", style: .Default, handler: { (action) in
-                self.performSegueWithIdentifier("showBuildingDetailsSegue", sender: view)
+            let showDetailsAction = UIAlertAction(title: "More Information", style: .default, handler: { (action) in
+                self.performSegue(withIdentifier: "showBuildingDetailsSegue", sender: view)
             })
             
             alertController.addAction(showDetailsAction)
             
-            let removePinAction = UIAlertAction(title: "Remove Pin", style: .Destructive, handler: { (action) in
+            let removePinAction = UIAlertAction(title: "Remove Pin", style: .destructive, handler: { (action) in
                 self.model.removeBuildingWithName(annotation.title!)
-                self.places.removeAtIndex(self.places.indexOf(annotation)!)
+                self.places.remove(at: self.places.index(of: annotation)!)
                 self.mapView.removeAnnotation(annotation)
                 self.tableViewController.tableView.reloadSectionIndexTitles()
                 self.tableViewController.tableView.reloadData()
-                self.tableViewController.tableView.setContentOffset(CGPointZero, animated: false)
+                self.tableViewController.tableView.setContentOffset(CGPoint.zero, animated: false)
                 self.model.updateCurrentLocation(self.mapView.region.center.latitude, longitude: self.mapView.region.center.longitude, latitudeDelta: self.mapView.region.span.latitudeDelta, longitudeDelta: self.mapView.region.span.longitudeDelta)
             })
             
             alertController.addAction(removePinAction)
             
-            let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             
             alertController.addAction(cancelAction)
             
-            self.presentViewController(alertController, animated: true, completion: nil)
+            self.present(alertController, animated: true, completion: nil)
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier! {
         case "showBuildingDetailsSegue":
-            let destinationViewController = segue.destinationViewController as! BuildingDetailsViewController
+            let destinationViewController = segue.destination as! BuildingDetailsViewController
             let annotationView = sender as! MKAnnotationView
             
             let annotation = annotationView.annotation as! Place
@@ -435,16 +435,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     }
     
-    func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         let region = mapView.region
         model.updateCurrentLocation(region.center.latitude, longitude: region.center.longitude, latitudeDelta: region.span.latitudeDelta, longitudeDelta: region.span.longitudeDelta)
     }
     
-    func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if overlay is MKPolyline {
             let polylineRenderer = MKPolylineRenderer(overlay: overlay)
             
-            polylineRenderer.strokeColor = UIColor.blueColor()
+            polylineRenderer.strokeColor = UIColor.blue
             polylineRenderer.lineWidth = 3.0
             return polylineRenderer
         }
@@ -453,7 +453,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
 
     
-    func sourceAndDestination(source: Building?, destination: Building?) {
+    func sourceAndDestination(_ source: Building?, destination: Building?) {
         self.directionsSource = source
         self.directionsDestination = destination
     }
@@ -485,11 +485,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         walkingRouteRequest.source = sourceMapItem
         walkingRouteRequest.destination = destinationMapItem
-        walkingRouteRequest.transportType = .Walking
+        walkingRouteRequest.transportType = .walking
         walkingRouteRequest.requestsAlternateRoutes = false
         
         let directions = MKDirections(request: walkingRouteRequest)
-        directions.calculateDirectionsWithCompletionHandler { (response, error) in
+        directions.calculate { (response, error) in
             if error != nil {
                 assert(false, "Error getting directions.")
             } else {
@@ -498,7 +498,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     }
     
-    func showDirections(response: MKDirectionsResponse) {
+    func showDirections(_ response: MKDirectionsResponse) {
         mapView.removeOverlays(mapView.overlays)
         
         let route = response.routes.first!
@@ -507,68 +507,68 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         let travelTime = route.expectedTravelTime
         
-        let currentDate = NSDate().dateByAddingTimeInterval(travelTime)
+        let currentDate = Date().addingTimeInterval(travelTime)
         
-        let formatter = NSDateFormatter()
+        let formatter = DateFormatter()
         
-        formatter.timeZone = NSTimeZone.systemTimeZone()
+        formatter.timeZone = TimeZone.current
         
         formatter.dateFormat = "h:mm a"
         
-        let eta = formatter.stringFromDate(currentDate)
+        let eta = formatter.string(from: currentDate)
         
         etaLabel.title = "ETA: \(eta)"
         
-        mapView.addOverlay(route.polyline)
+        mapView.add(route.polyline)
         
         let region = MKCoordinateRegionMakeWithDistance(route.polyline.coordinate, 1500, 1500)
         mapView.setRegion(region, animated: true)
         directionLabel.title = directionModel.instructionsAtIndex(0)
-        directionsBar.hidden = false
-        etaBar.hidden = false
+        directionsBar.isHidden = false
+        etaBar.isHidden = false
     }
 
     
-    @IBAction func dismissDirections(segue: UIStoryboardSegue) {
+    @IBAction func dismissDirections(_ segue: UIStoryboardSegue) {
         getDirections()
     }
     
-    @IBAction func dismissBuildingDetails(segue: UIStoryboardSegue) {
+    @IBAction func dismissBuildingDetails(_ segue: UIStoryboardSegue) {
         tableViewController.tableView.reloadData()
     }
     
-    @IBAction func dismissPreferences(segue: UIStoryboardSegue) {
+    @IBAction func dismissPreferences(_ segue: UIStoryboardSegue) {
         viewDidLoad()
     }
     
-    @IBAction func prevDirectionButtonPressed(sender: UIBarButtonItem) {
+    @IBAction func prevDirectionButtonPressed(_ sender: UIBarButtonItem) {
         currentStepInDirections -= 1
         
         if currentStepInDirections == 0 {
-            prevDirectionButton.enabled = false
+            prevDirectionButton.isEnabled = false
         }
         
-        nextDirectionButton.enabled = true
+        nextDirectionButton.isEnabled = true
         
         directionLabel.title = directionModel.instructionsAtIndex(currentStepInDirections)
     }
     
-    @IBAction func nextDirectionButtonPressed(sender: UIBarButtonItem) {
+    @IBAction func nextDirectionButtonPressed(_ sender: UIBarButtonItem) {
         currentStepInDirections += 1
         
         if currentStepInDirections == directionModel.numberOfInstructions() - 1 {
-            nextDirectionButton.enabled = false
+            nextDirectionButton.isEnabled = false
         }
         
-        prevDirectionButton.enabled = true
+        prevDirectionButton.isEnabled = true
         
         directionLabel.title = directionModel.instructionsAtIndex(currentStepInDirections)
     }
 
-    @IBAction func removeRouteButtonPressed(sender: UIBarButtonItem) {
+    @IBAction func removeRouteButtonPressed(_ sender: UIBarButtonItem) {
         mapView.removeOverlays(mapView.overlays)
-        directionsBar.hidden = true
-        etaBar.hidden = true
+        directionsBar.isHidden = true
+        etaBar.isHidden = true
     }
 
 }
