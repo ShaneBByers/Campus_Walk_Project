@@ -61,25 +61,8 @@ class TableViewController: UITableViewController {
         if let identifier = segue.identifier {
             switch identifier {
             case "MapSegue":
-                
                 if let cell = sender as? UITableViewCell {
                     let indexPath = tableView.indexPath(for: cell)
-                    //////////
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    ///////// This is weird. Had to fix this to get rid of warning.
                     self.model.selectBuildingWithIndexPathNoReturn(indexPath!)
                 }
             case "unwindToDirections":

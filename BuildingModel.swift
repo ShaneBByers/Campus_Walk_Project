@@ -162,6 +162,7 @@ class BuildingModel {
     }
     
     func addFavoriteBuildingWithName(_ name: String) {
+        
         if favoriteBuildings.count == 0 {
             allKeys.insert(favoriteLetter, at: 0)
             
@@ -189,7 +190,7 @@ class BuildingModel {
         
     }
     
-    func deleteFavoriteBuildingWithName(_ name: String) {
+    func deleteFavoriteBuildingFromFavoritesWithName(_ name: String) {
         for (i, building) in favoriteBuildings.enumerated() {
             if building.name == name {
                 
@@ -213,8 +214,15 @@ class BuildingModel {
     func deleteDefaultBuildingWithName(_ name: String) {
         for (i, building) in defaultBuildings.enumerated() {
             if building.name == name {
-                
                 defaultBuildings.remove(at: i)
+            }
+        }
+    }
+    
+    func deleteFavoriteBuildingWithName(_ name: String) {
+        for (i, building) in favoriteBuildings.enumerated() {
+            if building.name == name {
+                favoriteBuildings.remove(at: i)
             }
         }
     }
@@ -269,7 +277,7 @@ class BuildingModel {
     }
     
     func removeBuildingWithName(_ name: String) {
-        deleteFavoriteBuildingWithName(name)
+        deleteFavoriteBuildingFromFavoritesWithName(name)
         deleteDefaultBuildingWithName(name)
     }
     

@@ -342,7 +342,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 
                 if isFavorite {
                     let deleteFavoriteAction = UIAlertAction(title: "Remove from Favorites", style: .destructive, handler: { (action) in
-                        self.model.deleteFavoriteBuildingWithName(annotation.title!)
+                        self.model.deleteFavoriteBuildingFromFavoritesWithName(annotation.title!)
                         annotation.isFavorite = false
                         self.tableViewController.tableView.reloadSectionIndexTitles()
                         self.tableViewController.tableView.reloadData()
